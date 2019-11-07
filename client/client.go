@@ -44,5 +44,5 @@ func main() {
     return
   }
 
-  fmt.Printf("Successfully created dns record %s.%s with TTL %d", host, zone, ttl)
+  fmt.Printf("Successfully created dns record %s.%s with TTL %d\n", host, zone, ttl)
 }

@@ -8,7 +8,9 @@ import (
   "net"
 )
 
-type server struct {}
+type server struct {
+  requests []*pb.NewRecordRequest
+}
 
 func (s *server) NewRecord(ctx context.Context, in *pb.NewRecordRequest) (*pb.NewRecordReply, error) {
   reply := &pb.NewRecordReply{
@@ -17,7 +19,32 @@ func (s *server) NewRecord(ctx context.Context, in *pb.NewRecordRequest) (*pb.Ne
   }
   log.Printf("Created DNS record with hostname: %s, zone: %s, ttl: %d", in.Host, in.Zone, in.Ttl)
 
+  s.requests = append(s.requests, in)
   return reply, nil
+}
+
+func (s *server) RequestStream(st *pb.NewRequestStream, stream pb.DNS_RequestStreamServer) error {
+  ctx := stream.Context()
+
+  var requestIndex int
+
+  for {
+    select {
+    case <- ctx.Done():
+      return ctx.Err()
+      default:
+    }
+
+    if len(s.requests) > requestIndex-1 {
+      for _, request := range s.requests[requestIndex:] {
+        err := stream.Send(request)
+        if err != nil {
+          log.Fatalf("Error streaming requests to client: %v", err)
+        }
+        requestIndex++
+      }
+    }
+  }
 }
 
 func main() {

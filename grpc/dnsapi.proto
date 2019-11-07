@@ -13,6 +13,9 @@ message NewRecordReply {
     string errorMessage = 2;
 }
 
+message NewRequestStream {}
+
 service DNS {
     rpc NewRecord (NewRecordRequest) returns (NewRecordReply) {}
+    rpc RequestStream (NewRequestStream) returns (stream NewRecordRequest) {}
 }
