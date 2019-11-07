@@ -2,8 +2,8 @@ package main
 
 import (
   "context"
-  "google.golang.org/grpc"
   pb "github.com/brandentimm/dns-api/grpc"
+  "google.golang.org/grpc"
   "log"
   "net"
 )
