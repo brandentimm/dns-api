@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package dnsapi;
+
+message NewRecordRequest {
+    string host = 1;
+    string zone = 2;
+    int32 ttl = 3;
+}
+
+message NewRecordReply {
+    int32 responseCode = 1;
+    string errorMessage = 2;
+}
+
+service DNS {
+    rpc NewRecord (NewRecordRequest) returns (NewRecordReply) {}
+}
